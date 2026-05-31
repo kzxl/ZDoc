@@ -5,5 +5,6 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/DocLens.Tests/DocLens.Tests.csproj" />
+    <Project Path="tests/DocLens.SampleLib/DocLens.SampleLib.csproj" />
   </Folder>
 </Solution>

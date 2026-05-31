@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\DocLens.Core\DocLens.Core.csproj" />
+    <ProjectReference Include="..\DocLens.SampleLib\DocLens.SampleLib.csproj" />
   </ItemGroup>
 
 </Project>
