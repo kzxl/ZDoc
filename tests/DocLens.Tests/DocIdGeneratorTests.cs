@@ -78,6 +78,8 @@ namespace DocLens.Tests
             }
             return ids;
         }
+
+        [Theory]
         [InlineData("T:DocLens.SampleLib.Money")]
         [InlineData("T:DocLens.SampleLib.Repository`1")]
         [InlineData("T:DocLens.SampleLib.Constants.Options")]

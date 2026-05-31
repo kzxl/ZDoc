@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CI: true
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  build-test-pack:
+    # DocLens.Core is netstandard2.0 and the tool/tests are net8.0, all cross-platform.
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore DocLens.slnx
+
+      - name: Build
+        run: dotnet build DocLens.slnx -c Release --no-restore
+
+      - name: Test
+        run: dotnet test tests/DocLens.Tests/DocLens.Tests.csproj -c Release --no-build --verbosity normal
+
+      - name: Pack
+        run: |
+          dotnet pack src/DocLens.Core/DocLens.Core.csproj -c Release --no-build -o artifacts
+          dotnet pack src/DocLens.Tool/DocLens.Tool.csproj -c Release --no-build -o artifacts
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages
+          path: artifacts/*.nupkg

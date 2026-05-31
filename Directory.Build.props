@@ -1,0 +1,31 @@
+<Project>
+
+  <!--
+    Shared build settings applied to every project in this repository.
+    Keep this conservative: settings here must be valid for libraries, the test
+    project, the sample fixture, and the CLI tool alike.
+  -->
+  <PropertyGroup>
+    <!-- Reproducible output regardless of build machine. -->
+    <Deterministic>true</Deterministic>
+    <!-- Enable CI-deterministic paths only on build servers (set CI=true). -->
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+
+    <!-- Common analyzers and warnings. -->
+    <AnalysisLevel>latest</AnalysisLevel>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+
+    <!-- Shared package metadata (individual projects can override). -->
+    <Company>DocLens</Company>
+    <Copyright>Copyright (c) 2026</Copyright>
+    <PackageProjectUrl>https://github.com/doclens/doclens</PackageProjectUrl>
+  </PropertyGroup>
+
+  <!-- For packable projects, also produce a symbol package and embed untracked sources. -->
+  <PropertyGroup Condition="'$(IsPackable)' != 'false'">
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+
+</Project>

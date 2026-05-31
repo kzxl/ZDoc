@@ -11,7 +11,7 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>doclens</ToolCommandName>
     <PackageId>DocLens.Tool</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Authors>DocLens</Authors>
     <Description>Command-line tool that generates a self-contained HTML API reference for a .NET assembly from its XML documentation. A Swagger/DocFX alternative for class libraries.</Description>
     <PackageTags>documentation;api;cli;dotnet-tool;swagger-alternative</PackageTags>

@@ -111,7 +111,11 @@ new HtmlRenderer().RenderToFile(model, "docs/index.html");
 The generated page is designed for both readers and developers:
 
 - **Light/dark theme** with system-preference detection and persistence.
-- **Instant client-side search** over type names and summaries (press `/`).
+- **Instant client-side search** over type names, summaries, and member names
+  (press `/`), so searching a method surfaces the type that declares it.
+- **Cross-links**: type names in signatures and code link to their own pages.
+- **Markdown overview**: the `--readme` file is rendered as Markdown (headings,
+  lists, tables, code fences, links, emphasis).
 - **Keyboard and screen-reader friendly**: skip link, ARIA labels, visible
   focus outlines, semantic landmarks (`<nav>`, `<main>`).
 - **Responsive**: collapsible sidebar on small screens.

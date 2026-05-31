@@ -8,7 +8,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
     <PackageId>DocLens.Core</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Authors>DocLens</Authors>
     <Description>Generates a beautiful, self-contained HTML API reference for .NET libraries directly from an assembly and its XML documentation file. No running app, no HTTP host, no Swagger required. A static-site alternative to Swagger/DocFX for class libraries.</Description>
     <PackageTags>documentation;api;xmldoc;reference;swagger-alternative;docfx-alternative;static-site</PackageTags>

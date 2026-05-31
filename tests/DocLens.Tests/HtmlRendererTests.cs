@@ -71,5 +71,42 @@ namespace DocLens.Tests
             Assert.Contains("<main", html);
             Assert.Contains("<nav", html);
         }
+
+        [Fact]
+        public void Render_CrossLinksKnownTypes()
+        {
+            // Money's operator returns/takes Money; the signature should link to its own view.
+            string html = RenderSample();
+            Assert.Contains("<a class=\"tlink\" href=\"#", html);
+        }
+
+        [Fact]
+        public void Render_SidebarSearchIndexesMemberNames()
+        {
+            string html = RenderSample();
+            // The Repository nav entry's data-search must include a member name (e.g. LoadAsync),
+            // so searching by member surfaces the declaring type.
+            int navStart = html.IndexOf("data-target=\"view-t-doclens-samplelib-repository", System.StringComparison.OrdinalIgnoreCase);
+            Assert.True(navStart >= 0, "Repository nav entry not found.");
+            int dataSearchStart = html.IndexOf("data-search=\"", navStart, System.StringComparison.Ordinal);
+            int dataSearchEnd = html.IndexOf('"', dataSearchStart + "data-search=\"".Length);
+            string dataSearch = html.Substring(dataSearchStart, dataSearchEnd - dataSearchStart);
+            Assert.Contains("LoadAsync", dataSearch);
+        }
+
+        [Fact]
+        public void Render_MarkdownDescription_ProducesHeadingsNotRawHashes()
+        {
+            var extractor = new ApiExtractor(new ExtractionOptions
+            {
+                Description = "# Hello\n\nSome **bold** intro.",
+            });
+            var model = extractor.Extract(SampleAssembly.DllPath, SampleAssembly.XmlPath);
+            string html = new HtmlRenderer().Render(model);
+
+            Assert.Contains("<h1>Hello</h1>", html);
+            Assert.Contains("<strong>bold</strong>", html);
+            Assert.DoesNotContain("# Hello", html);
+        }
     }
 }

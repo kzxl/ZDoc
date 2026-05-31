@@ -19,6 +19,9 @@ namespace DocLens.Core.Rendering
         private readonly string _css;
         private readonly string _js;
 
+        /// <summary>Maps a simple type name (without generic args) to its view slug, for cross-links.</summary>
+        private Dictionary<string, string> _typeLinks = new Dictionary<string, string>(StringComparer.Ordinal);
+
         /// <summary>Creates a renderer, loading the embedded front-end template assets.</summary>
         public HtmlRenderer()
         {
@@ -32,6 +35,8 @@ namespace DocLens.Core.Rendering
         {
             if (document == null) throw new ArgumentNullException(nameof(document));
 
+            _typeLinks = BuildTypeLinkMap(document);
+
             string nav = BuildNav(document);
             string views = BuildViews(document);
 
@@ -43,6 +48,27 @@ namespace DocLens.Core.Rendering
                 .Replace("{{JS}}", _js)
                 .Replace("{{NAV}}", nav)
                 .Replace("{{VIEWS}}", views);
+        }
+
+        private static Dictionary<string, string> BuildTypeLinkMap(ApiDocument document)
+        {
+            var map = new Dictionary<string, string>(StringComparer.Ordinal);
+            foreach (var ns in document.Namespaces)
+            {
+                foreach (var type in ns.Types)
+                {
+                    // Key by the simple name without generic arguments, e.g. "AsyncDebouncer".
+                    string key = StripGenerics(type.Name);
+                    if (!map.ContainsKey(key)) map[key] = type.Slug;
+                }
+            }
+            return map;
+        }
+
+        private static string StripGenerics(string name)
+        {
+            int lt = name.IndexOf('<');
+            return lt >= 0 ? name.Substring(0, lt) : name;
         }
 
         /// <summary>Renders the document and writes it to <paramref name="outputPath"/>.</summary>
@@ -73,7 +99,10 @@ namespace DocLens.Core.Rendering
                 sb.Append("<div class=\"nav-ns-name\">").Append(Escape(ns.Name)).Append("</div>");
                 foreach (var type in ns.Types)
                 {
-                    string search = Escape((type.Name + " " + (type.Docs.Summary ?? "")).Trim());
+                    // Index the type name, its summary, and all member names so a search for a
+                    // member (e.g. "InvokeAsync") surfaces the type that declares it.
+                    var memberNames = string.Join(" ", type.Members.Select(m => StripGenerics(m.Name)).Distinct());
+                    string search = Escape((type.Name + " " + (type.Docs.Summary ?? "") + " " + memberNames).Trim());
                     sb.Append("<a class=\"nav-type\" data-target=\"view-").Append(type.Slug).Append("\" ")
                       .Append("data-search=\"").Append(search).Append("\" ")
                       .Append("href=\"#").Append(type.Slug).Append("\">")
@@ -87,7 +116,7 @@ namespace DocLens.Core.Rendering
 
         // ---- Content views ----
 
-        private static string BuildViews(ApiDocument document)
+        private string BuildViews(ApiDocument document)
         {
             var sb = new StringBuilder();
 
@@ -99,7 +128,7 @@ namespace DocLens.Core.Rendering
               .Append(Escape(document.AssemblyVersion)).Append("</p>");
             if (!string.IsNullOrWhiteSpace(document.Description))
             {
-                sb.Append(RenderProse(document.Description!));
+                sb.Append("<div class=\"md\">").Append(MarkdownRenderer.ToHtml(document.Description)).Append("</div>");
             }
             int typeCount = document.Namespaces.Sum(n => n.Types.Count);
             sb.Append("<p>This reference documents <strong>").Append(typeCount)
@@ -118,7 +147,7 @@ namespace DocLens.Core.Rendering
             return sb.ToString();
         }
 
-        private static string RenderTypeView(ApiType type)
+        private string RenderTypeView(ApiType type)
         {
             var sb = new StringBuilder();
             sb.Append("<section id=\"view-").Append(type.Slug).Append("\" class=\"content hidden\">");
@@ -151,7 +180,7 @@ namespace DocLens.Core.Rendering
             return sb.ToString();
         }
 
-        private static void RenderMemberGroup(StringBuilder sb, ApiType type, string title, MemberKind kind)
+        private void RenderMemberGroup(StringBuilder sb, ApiType type, string title, MemberKind kind)
         {
             var members = type.Members.Where(m => m.Kind == kind).ToList();
             if (members.Count == 0) return;
@@ -211,7 +240,7 @@ namespace DocLens.Core.Rendering
 
         // ---- Rendering helpers ----
 
-        private static string RenderExample(string code)
+        private string RenderExample(string code)
         {
             return "<div class=\"member-section\"><h5>Example</h5><pre class=\"code\"><code>"
                    + Highlight(code) + "</code></pre></div>";
@@ -256,8 +285,11 @@ namespace DocLens.Core.Rendering
             "void","get","set","init","this","ref","out","in","params","async","partial"
         };
 
-        /// <summary>Lightweight keyword highlighting for signature/code blocks (HTML-escaped).</summary>
-        private static string Highlight(string code)
+        /// <summary>
+        /// Lightweight keyword highlighting for signature/code blocks (HTML-escaped). Identifiers
+        /// that match a documented type are turned into in-page cross-links.
+        /// </summary>
+        private string Highlight(string code)
         {
             var sb = new StringBuilder();
             int i = 0;
@@ -271,6 +303,8 @@ namespace DocLens.Core.Rendering
                     string word = code.Substring(start, i - start);
                     if (Keywords.Contains(word))
                         sb.Append("<span class=\"kw\">").Append(word).Append("</span>");
+                    else if (_typeLinks.TryGetValue(word, out var slug))
+                        sb.Append("<a class=\"tlink\" href=\"#").Append(slug).Append("\">").Append(Escape(word)).Append("</a>");
                     else
                         sb.Append(Escape(word));
                 }
