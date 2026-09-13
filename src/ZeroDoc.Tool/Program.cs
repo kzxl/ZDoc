@@ -35,8 +35,10 @@ internal static class Program
                 return 2;
             }
 
+            bool isMarkdown = options.Format == "markdown" || options.Format == "md";
+            string defaultExt = isMarkdown ? ".md" : ".html";
             string output = options.OutputPath
-                ?? Path.ChangeExtension(Path.GetFileName(options.AssemblyPath), ".html");
+                ?? Path.ChangeExtension(Path.GetFileName(options.AssemblyPath), defaultExt);
 
             string? description = null;
             if (!string.IsNullOrEmpty(options.ReadmePath))
@@ -98,8 +100,16 @@ internal static class Program
                 foreach (var ns in model.Namespaces) typeCount += ns.Types.Count;
                 Console.WriteLine($"  {typeCount} type(s) in {model.Namespaces.Count} namespace(s).");
 
-                var renderer = new HtmlRenderer();
-                renderer.RenderToFile(model, output);
+                if (isMarkdown)
+                {
+                    var renderer = new ApiMarkdownRenderer();
+                    renderer.RenderToFile(model, output);
+                }
+                else
+                {
+                    var renderer = new HtmlRenderer();
+                    renderer.RenderToFile(model, output);
+                }
 
                 var info = new FileInfo(output);
                 Console.WriteLine($"Wrote {info.FullName} ({info.Length / 1024.0:0.0} KB).");
@@ -123,16 +133,17 @@ internal static class Program
     private static void PrintHelp()
     {
         Console.WriteLine(
-@"ZeroDoc — generate a self-contained HTML API reference for a .NET assembly.
+@"ZeroDoc — generate a self-contained HTML or Markdown API reference for a .NET assembly.
 
 USAGE:
-  ZeroDoc <assembly> [options]
+  ZeroDoc <assembly|nupkg> [options]
 
 ARGUMENTS:
-  <assembly>            Path to the .dll to document.
+  <assembly|nupkg>     Path to the .dll or .nupkg to document.
 
 OPTIONS:
-  -o, --output <file>  Output HTML path (default: <assembly>.html).
+  -o, --output <file>  Output documentation path (default: <assembly>.html or .md).
+  -f, --format <fmt>   Output format: html (default) or markdown / md.
   -x, --xml <file>     XML doc file (default: <assembly>.xml next to the dll).
   -t, --title <text>   Page title (default: ""<AssemblyName> API"").
   -r, --readme <file>  Markdown/text file shown on the overview page.
@@ -141,6 +152,7 @@ OPTIONS:
 
 EXAMPLES:
   ZeroDoc bin/Release/netstandard2.0/MyLib.dll
-  ZeroDoc MyLib.dll -o docs/index.html -t ""MyLib"" -r README.md");
+  ZeroDoc MyLib.dll -f markdown -o docs/API.md
+  ZeroDoc packages/MyPackage.1.0.0.nupkg -o docs/index.html");
     }
 }

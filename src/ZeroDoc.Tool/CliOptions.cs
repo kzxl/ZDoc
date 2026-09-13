@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace ZeroDoc.Tool;
 
@@ -10,6 +10,7 @@ internal sealed class CliOptions
     public string? XmlPath { get; private set; }
     public string? Title { get; private set; }
     public string? ReadmePath { get; private set; }
+    public string Format { get; private set; } = "html";
     public bool PublicOnly { get; private set; }
     public bool ShowHelp { get; private set; }
 
@@ -32,6 +33,11 @@ internal sealed class CliOptions
                 case "-o":
                 case "--output":
                     options.OutputPath = RequireValue(args, ref i, arg);
+                    break;
+
+                case "-f":
+                case "--format":
+                    options.Format = RequireValue(args, ref i, arg).ToLowerInvariant();
                     break;
 
                 case "-x":
