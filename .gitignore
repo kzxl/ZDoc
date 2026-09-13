@@ -31,3 +31,7 @@ coverage*.xml
 
 # DocLens generated output (sample)
 *.generated.html
+
+# Publish output
+publish/
+
