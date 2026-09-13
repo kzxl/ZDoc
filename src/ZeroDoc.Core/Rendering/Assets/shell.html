@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{TITLE}}</title>
+  <meta name="description" content="API reference for {{ASSEMBLY}} {{VERSION}}" />
+  <meta name="generator" content="ZeroDoc" />
+  <style>{{CSS}}</style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="header">
+    <button id="menu-btn" class="menu-btn" type="button" aria-label="Toggle navigation">&#9776;</button>
+    <h1>{{TITLE}} <span class="version">{{VERSION}}</span></h1>
+    <div class="search-wrap">
+      <input id="search" type="search" placeholder="Search types…  ( / )" aria-label="Search types" autocomplete="off" />
+    </div>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle theme">&#9728;</button>
+  </header>
+
+  <div class="layout">
+    <nav id="sidebar" class="sidebar" aria-label="API navigation">
+      {{NAV}}
+      <div id="no-results" class="no-results" style="display:none">No types match your search.</div>
+    </nav>
+
+    <main id="main" class="content-host">
+      {{VIEWS}}
+    </main>
+  </div>
+
+  <script>{{JS}}</script>
+</body>
+</html>

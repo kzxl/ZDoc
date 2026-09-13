@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <PackageId>ZeroDoc.Core</PackageId>
+    <Version>0.2.0</Version>
+    <Authors>ZeroDoc</Authors>
+    <Description>Generates a beautiful, self-contained HTML API reference for .NET libraries directly from an assembly and its XML documentation file. No running app, no HTTP host, no Swagger required. A static-site alternative to Swagger/DocFX for class libraries.</Description>
+    <PackageTags>documentation;api;xmldoc;reference;swagger-alternative;docfx-alternative;static-site</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Reflection.MetadataLoadContext" Version="8.0.0" />
+  </ItemGroup>
+
+  <!-- Embed front-end assets (CSS/JS template) into the assembly. -->
+  <ItemGroup>
+    <EmbeddedResource Include="Rendering\Assets\*.css" />
+    <EmbeddedResource Include="Rendering\Assets\*.js" />
+    <EmbeddedResource Include="Rendering\Assets\*.html" />
+  </ItemGroup>
+
+</Project>

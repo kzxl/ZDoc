@@ -16,9 +16,9 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
 
     <!-- Shared package metadata (individual projects can override). -->
-    <Company>DocLens</Company>
+    <Company>ZeroDoc</Company>
     <Copyright>Copyright (c) 2026</Copyright>
-    <PackageProjectUrl>https://github.com/doclens/doclens</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/kzxl/ZeroDoc</PackageProjectUrl>
   </PropertyGroup>
 
   <!-- For packable projects, also produce a symbol package and embed untracked sources. -->

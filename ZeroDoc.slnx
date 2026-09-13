@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ZeroDoc.Core/ZeroDoc.Core.csproj" />
+    <Project Path="src/ZeroDoc.Tool/ZeroDoc.Tool.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ZeroDoc.Tests/ZeroDoc.Tests.csproj" />
+    <Project Path="tests/ZeroDoc.SampleLib/ZeroDoc.SampleLib.csproj" />
+  </Folder>
+</Solution>
