@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using ZeroDoc.Core.Reflection;
 using ZeroDoc.Core.Rendering;
@@ -51,26 +51,67 @@ internal static class Program
                 }
             }
 
-            var extractor = new ApiExtractor(new ExtractionOptions
+            string assemblyToExtract = options.AssemblyPath;
+            string? xmlToExtract = options.XmlPath;
+            string? tempExtractDir = null;
+            string? docTitle = options.Title;
+
+            if (options.AssemblyPath.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase))
             {
-                IncludeProtected = !options.PublicOnly,
-                Title = options.Title,
-                Description = description,
-            });
+                tempExtractDir = Path.Combine(Path.GetTempPath(), "ZeroDoc_nupkg_" + Guid.NewGuid().ToString("N"));
+                Console.WriteLine($"Inspecting NuGet package: {Path.GetFileName(options.AssemblyPath)} ...");
+                var nupkgRes = NupkgInspector.Extract(options.AssemblyPath, tempExtractDir);
 
-            Console.WriteLine($"Reading {Path.GetFileName(options.AssemblyPath)} ...");
-            var model = extractor.Extract(options.AssemblyPath, options.XmlPath);
+                assemblyToExtract = nupkgRes.ExtractedAssemblyPath;
+                xmlToExtract = nupkgRes.ExtractedXmlPath;
 
-            int typeCount = 0;
-            foreach (var ns in model.Namespaces) typeCount += ns.Types.Count;
-            Console.WriteLine($"  {typeCount} type(s) in {model.Namespaces.Count} namespace(s).");
+                if (string.IsNullOrEmpty(docTitle))
+                {
+                    docTitle = $"{nupkgRes.Metadata.PackageId} v{nupkgRes.Metadata.Version} ({nupkgRes.Metadata.SelectedFramework})";
+                }
+                if (string.IsNullOrEmpty(description) && !string.IsNullOrEmpty(nupkgRes.Metadata.Description))
+                {
+                    description = nupkgRes.Metadata.Description;
+                }
 
-            var renderer = new HtmlRenderer();
-            renderer.RenderToFile(model, output);
+                Console.WriteLine($"  Package ID: {nupkgRes.Metadata.PackageId} ({nupkgRes.Metadata.Version})");
+                Console.WriteLine($"  Framework:  {nupkgRes.Metadata.SelectedFramework}");
+                if (nupkgRes.Metadata.Dependencies.Count > 0)
+                {
+                    Console.WriteLine($"  Dependencies: {string.Join(", ", nupkgRes.Metadata.Dependencies)}");
+                }
+            }
 
-            var info = new FileInfo(output);
-            Console.WriteLine($"Wrote {info.FullName} ({info.Length / 1024.0:0.0} KB).");
-            return 0;
+            try
+            {
+                var extractor = new ApiExtractor(new ExtractionOptions
+                {
+                    IncludeProtected = !options.PublicOnly,
+                    Title = docTitle,
+                    Description = description,
+                });
+
+                Console.WriteLine($"Reading {Path.GetFileName(assemblyToExtract)} ...");
+                var model = extractor.Extract(assemblyToExtract, xmlToExtract);
+
+                int typeCount = 0;
+                foreach (var ns in model.Namespaces) typeCount += ns.Types.Count;
+                Console.WriteLine($"  {typeCount} type(s) in {model.Namespaces.Count} namespace(s).");
+
+                var renderer = new HtmlRenderer();
+                renderer.RenderToFile(model, output);
+
+                var info = new FileInfo(output);
+                Console.WriteLine($"Wrote {info.FullName} ({info.Length / 1024.0:0.0} KB).");
+                return 0;
+            }
+            finally
+            {
+                if (tempExtractDir != null && Directory.Exists(tempExtractDir))
+                {
+                    try { Directory.Delete(tempExtractDir, recursive: true); } catch { }
+                }
+            }
         }
         catch (Exception ex)
         {
