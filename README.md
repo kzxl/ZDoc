@@ -1,13 +1,14 @@
-# DocLens
+# 🌌 ZeroDoc — Static HTML API Reference Generator
 
-Generate a **beautiful, self-contained HTML API reference** for a .NET library
-directly from its assembly and XML documentation file.
+[![.NET](https://img.shields.io/badge/.NET-Standard%202.0%20%7C%208.0-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+[![Ecosystem](https://img.shields.io/badge/Ecosystem-ZeroUniverse-6366F1?style=flat-square)](https://github.com/kzxl/ZeroUniverse)
 
-No running app. No HTTP host. No Swagger. DocLens reads a `.dll` plus its
-compiler-generated `.xml` doc file and produces a single static HTML page you
-can open from disk, commit to a repo, or publish to any static host.
+Generate a **beautiful, self-contained HTML API reference** for any .NET library directly from its compiled assembly and XML documentation file. Part of the sovereign **ZeroUniverse** ecosystem, ZeroDoc operates with zero running servers, zero HTTP hosts, and zero external runtime dependencies.
 
-## Why DocLens
+No running app. No HTTP host. No Swagger. ZeroDoc reads a `.dll` plus its compiler-generated `.xml` doc file and produces a single static HTML page you can open directly from disk, commit to a repo, or publish to any static host.
+
+## Why ZeroDoc
 
 Swagger/OpenAPI documents HTTP endpoints of a *running* web app. That does not
 help when you ship a **class library** (a NuGet package, an internal SDK, a
@@ -141,14 +142,14 @@ modifiers; nullable and array types; C# keyword aliases (`int`, `string`, …).
 ## Project layout
 
 ```
-DocLens/
+ZeroDoc/
 ├── src/
 │   ├── DocLens.Core/        netstandard2.0 library (extractor + renderer)
 │   │   ├── Model/           ApiDocument, ApiType, ApiMember, XmlDocEntry
 │   │   ├── Reflection/      DocIdGenerator, ApiExtractor, SignatureBuilder, TypeNameFormatter
 │   │   ├── Xml/             XmlDocParser
 │   │   └── Rendering/       HtmlRenderer + embedded CSS/JS/HTML assets
-│   └── DocLens.Tool/        net8.0 dotnet tool (`doclens`)
+│   └── DocLens.Tool/        net8.0 dotnet tool (`zerodoc`)
 └── tests/
     ├── DocLens.SampleLib/   richly documented fixture library
     └── DocLens.Tests/       unit + dogfood tests
@@ -156,18 +157,18 @@ DocLens/
 
 ## Testing approach
 
-DocLens is validated by **dogfooding**: the test fixture
+ZeroDoc is validated by **dogfooding**: the test fixture
 (`DocLens.SampleLib`) is compiled with XML docs, and tests assert that every
 documentation ID the C# compiler emitted can be reproduced by `DocIdGenerator`
 from reflection. The extractor and renderer are then run end-to-end over the
 compiled fixture. This catches real metadata edge cases (operators, generic
 arity, indexers, `MetadataLoadContext` limitations) that mocks would miss.
 
-```
+```bash
 dotnet build
 dotnet test
 ```
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+Licensed under the **MIT License**. Part of the sovereign **ZeroUniverse** industrial computing ecosystem. See [LICENSE](LICENSE).
