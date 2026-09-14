@@ -96,6 +96,20 @@ public class NupkgInspectorTests : IDisposable
         Assert.Equal("SYNTHETIC_DLL_CONTENT_NET8", File.ReadAllText(res.ExtractedAssemblyPath));
     }
 
+    [Fact]
+    public void ExtractToMemory_LoadsStreamsWithoutCreatingDiskFiles()
+    {
+        using var memStreams = NupkgInspector.ExtractToMemory(_testNupkgPath, "net8.0");
+
+        Assert.Equal("net8.0", memStreams.Metadata.SelectedFramework);
+        Assert.NotNull(memStreams.AssemblyStream);
+        Assert.NotNull(memStreams.XmlDocStream);
+
+        using var reader = new StreamReader(memStreams.AssemblyStream, Encoding.UTF8, leaveOpen: true);
+        var content = reader.ReadToEnd();
+        Assert.Equal("SYNTHETIC_DLL_CONTENT_NET8", content);
+    }
+
     public void Dispose()
     {
         try

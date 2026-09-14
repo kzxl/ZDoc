@@ -175,4 +175,88 @@ public static class NupkgInspector
             ExtractionDirectory = targetDirectory
         };
     }
+
+    /// <summary>
+    /// Loads assembly and XML documentation from .nupkg directly into memory streams without disk extraction.
+    /// </summary>
+    public static NupkgInMemoryStreams ExtractToMemory(string nupkgPath, string? preferredTfm = null)
+    {
+        var meta = Inspect(nupkgPath);
+        using var archive = ZipFile.OpenRead(nupkgPath);
+
+        string selectedTfm = preferredTfm ?? meta.AvailableFrameworks.FirstOrDefault() ?? "";
+        if (!meta.AvailableFrameworks.Contains(selectedTfm, StringComparer.OrdinalIgnoreCase) && meta.AvailableFrameworks.Count > 0)
+        {
+            selectedTfm = meta.AvailableFrameworks[0];
+        }
+        meta.SelectedFramework = selectedTfm;
+
+        string prefix = string.IsNullOrEmpty(selectedTfm) ? "lib/" : $"lib/{selectedTfm}/";
+        var tfmEntries = archive.Entries.Where(e => e.FullName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)).ToList();
+
+        if (tfmEntries.Count == 0)
+        {
+            tfmEntries = archive.Entries.Where(e => e.FullName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) || e.FullName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+        MemoryStream? assemblyStream = null;
+        MemoryStream? xmlStream = null;
+
+        foreach (var entry in tfmEntries)
+        {
+            var fileName = Path.GetFileName(entry.FullName);
+            if (string.IsNullOrEmpty(fileName)) continue;
+
+            if (fileName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+            {
+                if (assemblyStream == null)
+                {
+                    assemblyStream = new MemoryStream();
+                    using var s = entry.Open();
+                    s.CopyTo(assemblyStream);
+                    assemblyStream.Position = 0;
+                    meta.AssemblyFileName = fileName;
+                }
+            }
+            else if (fileName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
+            {
+                xmlStream = new MemoryStream();
+                using var s = entry.Open();
+                s.CopyTo(xmlStream);
+                xmlStream.Position = 0;
+            }
+        }
+
+        if (assemblyStream == null)
+        {
+            throw new InvalidOperationException($"No target assembly DLL found in package {nupkgPath} for framework {selectedTfm}");
+        }
+
+        return new NupkgInMemoryStreams
+        {
+            Metadata = meta,
+            AssemblyStream = assemblyStream,
+            XmlDocStream = xmlStream
+        };
+    }
+}
+
+/// <summary>
+/// In-memory stream representation of assembly and documentation extracted from a .nupkg archive.
+/// </summary>
+public class NupkgInMemoryStreams : IDisposable
+{
+    /// <summary>Package metadata.</summary>
+    public NupkgMetadata Metadata { get; set; } = new NupkgMetadata();
+    /// <summary>In-memory stream of the extracted assembly.</summary>
+    public Stream AssemblyStream { get; set; } = Stream.Null;
+    /// <summary>In-memory stream of the XML documentation file, if present.</summary>
+    public Stream? XmlDocStream { get; set; }
+
+    /// <summary>Disposes underlying memory streams.</summary>
+    public void Dispose()
+    {
+        AssemblyStream?.Dispose();
+        XmlDocStream?.Dispose();
+    }
 }
