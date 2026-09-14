@@ -26,18 +26,18 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Restore
-        run: dotnet restore DocLens.slnx
+        run: dotnet restore ZeroDoc.slnx
 
       - name: Build
-        run: dotnet build DocLens.slnx -c Release --no-restore
+        run: dotnet build ZeroDoc.slnx -c Release --no-restore
 
       - name: Test
-        run: dotnet test tests/DocLens.Tests/DocLens.Tests.csproj -c Release --no-build --verbosity normal
+        run: dotnet test tests/ZeroDoc.Tests/ZeroDoc.Tests.csproj -c Release --no-build --verbosity normal
 
       - name: Pack
         run: |
-          dotnet pack src/DocLens.Core/DocLens.Core.csproj -c Release --no-build -o artifacts
-          dotnet pack src/DocLens.Tool/DocLens.Tool.csproj -c Release --no-build -o artifacts
+          dotnet pack src/ZeroDoc.Core/ZeroDoc.Core.csproj -c Release --no-build -o artifacts
+          dotnet pack src/ZeroDoc.Tool/ZeroDoc.Tool.csproj -c Release --no-build -o artifacts
 
       - name: Upload packages
         uses: actions/upload-artifact@v4
