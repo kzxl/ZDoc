@@ -1,8 +1,11 @@
 # 🌌 ZeroDoc — Static HTML API Reference Generator
 
+[![Type: CLI Tool](https://img.shields.io/badge/Type-CLI%20Tool%20%26%20Global%20Tool-orange?style=flat-square&logo=gnubash)](https://github.com/kzxl/ZeroDoc)
+[![Ecosystem](https://img.shields.io/badge/Ecosystem-ZeroUniverse-8A2BE2?style=flat-square)](https://github.com/kzxl/ZeroUniverse)
+[![Distribution](https://img.shields.io/badge/Distribution-Standalone%20Single--File-2ea44f?style=flat-square)](https://github.com/kzxl/ZeroDoc)
 [![.NET](https://img.shields.io/badge/.NET-Standard%202.0%20%7C%208.0-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
-[![Ecosystem](https://img.shields.io/badge/Ecosystem-ZeroUniverse-6366F1?style=flat-square)](https://github.com/kzxl/ZeroUniverse)
+
 
 Generate a **beautiful, self-contained HTML API reference** for any .NET library directly from its compiled assembly and XML documentation file. Part of the sovereign **ZeroUniverse** ecosystem, ZeroDoc operates with zero running servers, zero HTTP hosts, and zero external runtime dependencies.
 
