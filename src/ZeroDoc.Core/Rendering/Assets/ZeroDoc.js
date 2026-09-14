@@ -53,6 +53,55 @@
     }
   }
 
+  // ---- Fuzzy String Matching (Levenshtein + Acronym + Substring) ----
+  function levenshtein(a, b) {
+    if (a === b) return 0;
+    if (a.length === 0) return b.length;
+    if (b.length === 0) return a.length;
+    var matrix = [];
+    for (var i = 0; i <= b.length; i++) matrix[i] = [i];
+    for (var j = 0; j <= a.length; j++) matrix[0][j] = j;
+    for (var i = 1; i <= b.length; i++) {
+      for (var j = 1; j <= a.length; j++) {
+        if (b.charAt(i - 1) === a.charAt(j - 1)) {
+          matrix[i][j] = matrix[i - 1][j - 1];
+        } else {
+          matrix[i][j] = Math.min(
+            matrix[i - 1][j - 1] + 1, // substitution
+            matrix[i][j - 1] + 1,     // insertion
+            matrix[i - 1][j] + 1      // deletion
+          );
+        }
+      }
+    }
+    return matrix[b.length][a.length];
+  }
+
+  function fuzzyMatch(query, target) {
+    if (!query) return true;
+    var q = query.toLowerCase();
+    var t = target.toLowerCase();
+    // 1. Direct substring
+    if (t.indexOf(q) >= 0) return true;
+
+    // 2. Acronym match (e.g. "HC" -> "HttpClient")
+    var words = t.split(/[\s\.\-_]+/);
+    if (words.length > 1) {
+      var acronym = words.map(function (w) { return w[0] || ""; }).join("");
+      if (acronym.indexOf(q) >= 0) return true;
+    }
+
+    // 3. Typo tolerance: Levenshtein distance <= 1 for short queries, <= 2 for longer
+    var maxDist = q.length <= 4 ? 1 : 2;
+    for (var k = 0; k < words.length; k++) {
+      var w = words[k];
+      if (Math.abs(w.length - q.length) <= maxDist) {
+        if (levenshtein(q, w) <= maxDist) return true;
+      }
+    }
+    return false;
+  }
+
   // ---- Search (filters sidebar type list; matches name + summary) ----
   function initSearch() {
     var input = document.getElementById("search");
@@ -60,13 +109,36 @@
     var items = Array.prototype.slice.call(document.querySelectorAll(".nav-type"));
     var namespaces = Array.prototype.slice.call(document.querySelectorAll(".nav-ns"));
     var noResults = document.getElementById("no-results");
+    var activeIdx = -1;
+
+    function getVisibleItems() {
+      return items.filter(function (it) {
+        return it.style.display !== "none";
+      });
+    }
+
+    function setHighlight(idx) {
+      var vis = getVisibleItems();
+      vis.forEach(function (el) { el.classList.remove("highlighted"); });
+      if (idx >= 0 && idx < vis.length) {
+        activeIdx = idx;
+        vis[activeIdx].classList.add("highlighted");
+        if (vis[activeIdx].scrollIntoView) {
+          vis[activeIdx].scrollIntoView({ block: "nearest" });
+        }
+      } else {
+        activeIdx = -1;
+      }
+    }
 
     function run() {
       var q = input.value.trim().toLowerCase();
       var anyVisible = false;
+      activeIdx = -1;
       items.forEach(function (it) {
+        it.classList.remove("highlighted");
         var hay = (it.getAttribute("data-search") || it.textContent).toLowerCase();
-        var show = q === "" || hay.indexOf(q) >= 0;
+        var show = q === "" || fuzzyMatch(q, hay);
         it.style.display = show ? "" : "none";
         if (show) anyVisible = true;
       });
@@ -81,13 +153,38 @@
     var t;
     input.addEventListener("input", function () {
       clearTimeout(t);
-      t = setTimeout(run, 120); // debounce
+      t = setTimeout(run, 100); // debounce
+    });
+
+    // Keyboard navigation (Arrows, Enter) within search input
+    input.addEventListener("keydown", function (e) {
+      var vis = getVisibleItems();
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (vis.length > 0) {
+          setHighlight(activeIdx < vis.length - 1 ? activeIdx + 1 : 0);
+        }
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        if (vis.length > 0) {
+          setHighlight(activeIdx > 0 ? activeIdx - 1 : vis.length - 1);
+        }
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (activeIdx >= 0 && activeIdx < vis.length) {
+          vis[activeIdx].click();
+          input.blur();
+        } else if (vis.length > 0) {
+          vis[0].click();
+          input.blur();
+        }
+      }
     });
 
     // "/" focuses search; Esc clears.
     document.addEventListener("keydown", function (e) {
       if (e.key === "/" && document.activeElement !== input) {
-        e.preventDefault(); input.focus();
+        e.preventDefault(); input.focus(); input.select();
       } else if (e.key === "Escape" && document.activeElement === input) {
         input.value = ""; run(); input.blur();
       }

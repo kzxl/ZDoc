@@ -111,7 +111,7 @@ code, pre { font-family: var(--mono); }
   font-size: 14px;
   border-left: 2px solid transparent;
 }
-.nav-type:hover { background: var(--bg-code); text-decoration: none; }
+.nav-type:hover, .nav-type.highlighted { background: var(--bg-code); text-decoration: none; }
 .nav-type.active { border-left-color: var(--accent); background: var(--accent-soft); }
 .nav-type .badge { flex: 0 0 auto; }
 

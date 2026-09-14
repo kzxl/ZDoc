@@ -108,5 +108,15 @@ namespace ZeroDoc.Tests
             Assert.Contains("<strong>bold</strong>", html);
             Assert.DoesNotContain("# Hello", html);
         }
+
+        [Fact]
+        public void Render_IncludesFuzzySearchAndArrowKeyNavigation()
+        {
+            string html = RenderSample();
+            Assert.Contains("levenshtein", html);
+            Assert.Contains("fuzzyMatch", html);
+            Assert.Contains("highlighted", html);
+            Assert.Contains("ArrowDown", html);
+        }
     }
 }
