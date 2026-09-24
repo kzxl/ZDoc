@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using ZDoc.Core.Reflection;
 using ZDoc.Core.Rendering;
 using Xunit;
@@ -29,7 +29,7 @@ namespace ZDoc.Tests
             // CSS and JS are inlined (self-contained).
             Assert.Contains("<style>", html);
             Assert.Contains("--accent", html);            // from ZDoc.css
-            Assert.Contains("zerodoc-theme", html);        // from ZDoc.js
+            Assert.Contains("zdoc-theme", html);        // from ZDoc.js
         }
 
         [Fact]

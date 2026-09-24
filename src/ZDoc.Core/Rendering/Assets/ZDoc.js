@@ -1,9 +1,9 @@
-// ZeroDoc — client-side interactivity: theme, search, navigation.
+// ZDoc — client-side interactivity: theme, search, navigation.
 (function () {
   "use strict";
 
   // ---- Theme (persisted, respects system preference) ----
-  var THEME_KEY = "zerodoc-theme";
+  var THEME_KEY = "zdoc-theme";
   function applyTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
     try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}

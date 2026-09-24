@@ -16,9 +16,9 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
 
     <!-- Shared package metadata (individual projects can override). -->
-    <Company>ZeroDoc</Company>
+    <Company>ZDoc</Company>
     <Copyright>Copyright (c) 2026</Copyright>
-    <PackageProjectUrl>https://github.com/kzxl/ZeroDoc</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/kzxl/ZDoc</PackageProjectUrl>
   </PropertyGroup>
 
   <!-- For packable projects, also produce a symbol package and embed untracked sources. -->

@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   publish:
-    name: Build, Pack & Publish ZeroDoc Packages
+    name: Build, Pack & Publish ZDoc Packages
     runs-on: ubuntu-latest
 
     steps:
@@ -27,10 +27,10 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Pack ZeroDoc Packages
+      - name: Pack ZDoc Packages
         run: |
-          dotnet pack src/ZeroDoc.Core/ZeroDoc.Core.csproj -c Release -o nupkgs
-          dotnet pack src/ZeroDoc.Tool/ZeroDoc.Tool.csproj -c Release -o nupkgs
+          dotnet pack src/ZDoc.Core/ZDoc.Core.csproj -c Release -o nupkgs
+          dotnet pack src/ZDoc.Tool/ZDoc.Tool.csproj -c Release -o nupkgs
 
       # 1. Push to GitHub Packages
       - name: Push to GitHub Packages
