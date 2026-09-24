@@ -1,4 +1,4 @@
-﻿# 🌌 ZDoc — Static HTML API Reference Generator
+# 🌌 ZDoc — Static HTML API Reference Generator
 
 [![Type: CLI Tool](https://img.shields.io/badge/Type-CLI%20Tool%20%26%20Global%20Tool-orange?style=flat-square&logo=gnubash)](https://github.com/kzxl/ZDoc)
 [![Ecosystem](https://img.shields.io/badge/Ecosystem-ZeroUniverse-8A2BE2?style=flat-square)](https://github.com/kzxl/ZeroUniverse)
@@ -18,7 +18,7 @@ help when you ship a **class library** (a NuGet package, an internal SDK, a
 WinForms/WPF helper). For libraries the usual option is DocFX, which is heavy,
 slow, and produces a multi-file site that needs a build pipeline.
 
-DocLens targets the gap:
+ZDoc targets the gap:
 
 - **Class libraries, not HTTP.** Documents public/protected types and members.
 - **Static, no runtime.** The assembly is inspected with
@@ -54,19 +54,19 @@ assembly.xml  ─┘            │
 As a .NET tool:
 
 ```
-dotnet tool install -g DocLens.Tool
+dotnet tool install -g ZDoc.Tool
 ```
 
 Or reference the library directly:
 
 ```
-dotnet add package DocLens.Core
+dotnet add package ZDoc.Core
 ```
 
 ## Usage (CLI)
 
 ```
-doclens <assembly> [options]
+zdoc <assembly> [options]
 ```
 
 | Option | Description |
@@ -147,21 +147,21 @@ modifiers; nullable and array types; C# keyword aliases (`int`, `string`, …).
 ```
 ZDoc/
 ├── src/
-│   ├── DocLens.Core/        netstandard2.0 library (extractor + renderer)
+│   ├── ZDoc.Core/        netstandard2.0 library (extractor + renderer)
 │   │   ├── Model/           ApiDocument, ApiType, ApiMember, XmlDocEntry
 │   │   ├── Reflection/      DocIdGenerator, ApiExtractor, SignatureBuilder, TypeNameFormatter
 │   │   ├── Xml/             XmlDocParser
 │   │   └── Rendering/       HtmlRenderer + embedded CSS/JS/HTML assets
-│   └── DocLens.Tool/        net8.0 dotnet tool (`zerodoc`)
+│   └── ZDoc.Tool/        net8.0 dotnet tool (`zdoc`)
 └── tests/
-    ├── DocLens.SampleLib/   richly documented fixture library
-    └── DocLens.Tests/       unit + dogfood tests
+    ├── ZDoc.SampleLib/   richly documented fixture library
+    └── ZDoc.Tests/       unit + dogfood tests
 ```
 
 ## Testing approach
 
 ZDoc is validated by **dogfooding**: the test fixture
-(`DocLens.SampleLib`) is compiled with XML docs, and tests assert that every
+(`ZDoc.SampleLib`) is compiled with XML docs, and tests assert that every
 documentation ID the C# compiler emitted can be reproduced by `DocIdGenerator`
 from reflection. The extractor and renderer are then run end-to-end over the
 compiled fixture. This catches real metadata edge cases (operators, generic
