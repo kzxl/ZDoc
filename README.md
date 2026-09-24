@@ -1,17 +1,17 @@
-# 🌌 ZeroDoc — Static HTML API Reference Generator
+﻿# 🌌 ZDoc — Static HTML API Reference Generator
 
-[![Type: CLI Tool](https://img.shields.io/badge/Type-CLI%20Tool%20%26%20Global%20Tool-orange?style=flat-square&logo=gnubash)](https://github.com/kzxl/ZeroDoc)
+[![Type: CLI Tool](https://img.shields.io/badge/Type-CLI%20Tool%20%26%20Global%20Tool-orange?style=flat-square&logo=gnubash)](https://github.com/kzxl/ZDoc)
 [![Ecosystem](https://img.shields.io/badge/Ecosystem-ZeroUniverse-8A2BE2?style=flat-square)](https://github.com/kzxl/ZeroUniverse)
-[![Distribution](https://img.shields.io/badge/Distribution-Standalone%20Single--File-2ea44f?style=flat-square)](https://github.com/kzxl/ZeroDoc)
+[![Distribution](https://img.shields.io/badge/Distribution-Standalone%20Single--File-2ea44f?style=flat-square)](https://github.com/kzxl/ZDoc)
 [![.NET](https://img.shields.io/badge/.NET-Standard%202.0%20%7C%208.0-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
 
-Generate a **beautiful, self-contained HTML API reference** for any .NET library directly from its compiled assembly and XML documentation file. Part of the sovereign **ZeroUniverse** ecosystem, ZeroDoc operates with zero running servers, zero HTTP hosts, and zero external runtime dependencies.
+Generate a **beautiful, self-contained HTML API reference** for any .NET library directly from its compiled assembly and XML documentation file. Part of the sovereign **ZeroUniverse** ecosystem, ZDoc operates with zero running servers, zero HTTP hosts, and zero external runtime dependencies.
 
-No running app. No HTTP host. No Swagger. ZeroDoc reads a `.dll` plus its compiler-generated `.xml` doc file and produces a single static HTML page you can open directly from disk, commit to a repo, or publish to any static host.
+No running app. No HTTP host. No Swagger. ZDoc reads a `.dll` plus its compiler-generated `.xml` doc file and produces a single static HTML page you can open directly from disk, commit to a repo, or publish to any static host.
 
-## Why ZeroDoc
+## Why ZDoc
 
 Swagger/OpenAPI documents HTTP endpoints of a *running* web app. That does not
 help when you ship a **class library** (a NuGet package, an internal SDK, a
@@ -145,7 +145,7 @@ modifiers; nullable and array types; C# keyword aliases (`int`, `string`, …).
 ## Project layout
 
 ```
-ZeroDoc/
+ZDoc/
 ├── src/
 │   ├── DocLens.Core/        netstandard2.0 library (extractor + renderer)
 │   │   ├── Model/           ApiDocument, ApiType, ApiMember, XmlDocEntry
@@ -160,7 +160,7 @@ ZeroDoc/
 
 ## Testing approach
 
-ZeroDoc is validated by **dogfooding**: the test fixture
+ZDoc is validated by **dogfooding**: the test fixture
 (`DocLens.SampleLib`) is compiled with XML docs, and tests assert that every
 documentation ID the C# compiler emitted can be reproduced by `DocIdGenerator`
 from reflection. The extractor and renderer are then run end-to-end over the

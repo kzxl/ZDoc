@@ -1,5 +1,5 @@
-<#
-    publish.ps1 — Publish script for ZeroDoc (Dual Mode: Full & Lite)
+﻿<#
+    publish.ps1 — Publish script for ZDoc (Dual Mode: Full & Lite)
     Adheres to AgentOption .NET Publish Release standard & ZeroUniverse rules.
 #>
 [CmdletBinding()]
@@ -12,7 +12,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $Root = $PSScriptRoot
-$Proj = Join-Path $Root "src\ZeroDoc.Tool\ZeroDoc.Tool.csproj"
+$Proj = Join-Path $Root "src\ZDoc.Tool\ZDoc.Tool.csproj"
 $Dist = Join-Path $Root "publish"
 
 if (Test-Path $Dist) {
@@ -20,23 +20,23 @@ if (Test-Path $Dist) {
 }
 
 if ($Mode -eq 'Full' -or $Mode -eq 'All') {
-    Write-Host ">>> Publishing ZeroDoc Full (Self-Contained Single File)..." -ForegroundColor Cyan
+    Write-Host ">>> Publishing ZDoc Full (Self-Contained Single File)..." -ForegroundColor Cyan
     $outFull = Join-Path $Dist "full"
     dotnet publish $Proj -c $Configuration -r $Runtime --self-contained true `
         -p:PublishSingleFile=true `
         -p:IncludeNativeLibrariesForSelfExtract=true `
         -p:EnableCompressionInSingleFile=true `
         -o $outFull
-    Write-Host "  ✔ Full build generated at: $outFull\ZeroDoc.Tool.exe" -ForegroundColor Green
+    Write-Host "  ✔ Full build generated at: $outFull\ZDoc.Tool.exe" -ForegroundColor Green
 }
 
 if ($Mode -eq 'Lite' -or $Mode -eq 'All') {
-    Write-Host ">>> Publishing ZeroDoc Lite (Framework-Dependent Single File)..." -ForegroundColor Cyan
+    Write-Host ">>> Publishing ZDoc Lite (Framework-Dependent Single File)..." -ForegroundColor Cyan
     $outLite = Join-Path $Dist "lite"
     dotnet publish $Proj -c $Configuration -r $Runtime --self-contained false `
         -p:PublishSingleFile=true `
         -o $outLite
-    Write-Host "  ✔ Lite build generated at: $outLite\ZeroDoc.Tool.exe" -ForegroundColor Green
+    Write-Host "  ✔ Lite build generated at: $outLite\ZDoc.Tool.exe" -ForegroundColor Green
 }
 
-Write-Host ">>> ZeroDoc publish completed successfully!" -ForegroundColor Green
+Write-Host ">>> ZDoc publish completed successfully!" -ForegroundColor Green

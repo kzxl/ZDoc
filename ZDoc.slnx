@@ -1,0 +1,10 @@
+﻿<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ZDoc.Core/ZDoc.Core.csproj" />
+    <Project Path="src/ZDoc.Tool/ZDoc.Tool.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ZDoc.Tests/ZDoc.Tests.csproj" />
+    <Project Path="tests/ZDoc.SampleLib/ZDoc.SampleLib.csproj" />
+  </Folder>
+</Solution>
